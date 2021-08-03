@@ -24,7 +24,8 @@ class MaterialControls extends StatefulWidget {
   }
 }
 
-class _MaterialControlsState extends State<MaterialControls> with SingleTickerProviderStateMixin {
+class _MaterialControlsState extends State<MaterialControls>
+    with SingleTickerProviderStateMixin {
   late PlayerNotifier notifier;
   late VideoPlayerValue _latestValue;
   double? _latestVolume;
@@ -88,9 +89,12 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
                 children: <Widget>[
                   if (_subtitleOn)
                     Transform.translate(
-                      offset: Offset(0.0, notifier.hideStuff ? barHeight * 0.8 : 0.0),
-                      child: _buildSubtitles(context, chewieController.subtitle!),
+                      offset: Offset(
+                          0.0, notifier.hideStuff ? barHeight * 0.8 : 0.0),
+                      child:
+                          _buildSubtitles(context, chewieController.subtitle!),
                     ),
+                  _buildControl(context),
                   _buildBottomBar(context),
                 ],
               ),
@@ -155,24 +159,30 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
           _onSpeedButtonTap();
         },
         iconData: Icons.speed,
-        title: chewieController.optionsTranslation?.playbackSpeedButtonText ?? 'Playback speed',
+        title: chewieController.optionsTranslation?.playbackSpeedButtonText ??
+            'Playback speed',
       )
     ];
 
-    if (chewieController.subtitle != null && chewieController.subtitle!.isNotEmpty) {
+    if (chewieController.subtitle != null &&
+        chewieController.subtitle!.isNotEmpty) {
       options.add(
         OptionItem(
           onTap: () {
             _onSubtitleTap();
             Navigator.pop(context);
           },
-          iconData: _subtitleOn ? Icons.closed_caption : Icons.closed_caption_off_outlined,
-          title: chewieController.optionsTranslation?.subtitlesButtonText ?? 'Subtitles',
+          iconData: _subtitleOn
+              ? Icons.closed_caption
+              : Icons.closed_caption_off_outlined,
+          title: chewieController.optionsTranslation?.subtitlesButtonText ??
+              'Subtitles',
         ),
       );
     }
 
-    if (chewieController.additionalOptions != null && chewieController.additionalOptions!(context).isNotEmpty) {
+    if (chewieController.additionalOptions != null &&
+        chewieController.additionalOptions!(context).isNotEmpty) {
       options.addAll(chewieController.additionalOptions!(context));
     }
 
@@ -192,7 +202,8 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
               useRootNavigator: true,
               builder: (context) => OptionsDialog(
                 options: options,
-                cancelButtonText: chewieController.optionsTranslation?.cancelButtonText,
+                cancelButtonText:
+                    chewieController.optionsTranslation?.cancelButtonText,
               ),
             );
           }
@@ -244,18 +255,41 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
     );
   }
 
+  AnimatedOpacity _buildControl(
+    BuildContext context,
+  ) {
+    return AnimatedOpacity(
+      opacity: notifier.hideStuff ? 0.0 : 1.0,
+      duration: const Duration(milliseconds: 300),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            if (chewieController.isLive)
+              const Expanded(child: Text('LIVE'))
+            else
+              _buildPosition(),
+            const Spacer(),
+            if (chewieController.allowMuting) _buildMuteButton(controller),
+            if (chewieController.allowFullScreen) _buildExpandButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
   AnimatedOpacity _buildBottomBar(
     BuildContext context,
   ) {
-    final iconColor = Theme.of(context).textTheme.button!.color;
-
     return AnimatedOpacity(
       opacity: notifier.hideStuff ? 0.0 : 1.0,
       duration: const Duration(milliseconds: 300),
       child: Container(
-        height: barHeight + (chewieController.isFullScreen ? 10.0 : 0),
+        height: barHeight / 3 + (chewieController.isFullScreen ? 10.0 : 0),
         padding: EdgeInsets.only(
           left: 20,
+          right: 20,
           bottom: !chewieController.isFullScreen ? 10.0 : 0,
         ),
         child: SafeArea(
@@ -264,31 +298,7 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Flexible(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    if (chewieController.isLive) const Expanded(child: Text('LIVE')) else _buildPosition(iconColor),
-                    const Spacer(),
-                    if (chewieController.allowMuting) _buildMuteButton(controller),
-                    if (chewieController.allowFullScreen) _buildExpandButton(),
-                  ],
-                ),
-              ),
-              const SizedBox(
-                height: 15.0,
-              ),
-              if (!chewieController.isLive)
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.only(right: 20),
-                    child: Row(
-                      children: [
-                        _buildProgressBar(),
-                      ],
-                    ),
-                  ),
-                ),
+              if (!chewieController.isLive) _buildProgressBar(),
             ],
           ),
         ),
@@ -296,11 +306,11 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
     );
   }
 
-  GestureDetector _buildMuteButton(
+  IconButton _buildMuteButton(
     VideoPlayerController controller,
   ) {
-    return GestureDetector(
-      onTap: () {
+    return IconButton(
+      onPressed: () {
         _cancelAndRestartTimer();
 
         if (_latestValue.volume == 0) {
@@ -310,43 +320,21 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
           controller.setVolume(0.0);
         }
       },
-      child: AnimatedOpacity(
-        opacity: notifier.hideStuff ? 0.0 : 1.0,
-        duration: const Duration(milliseconds: 300),
-        child: Container(
-          height: barHeight,
-          padding: const EdgeInsets.only(
-            right: 15.0,
-          ),
-          child: Icon(
-            _latestValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
-            color: Colors.white,
-          ),
-        ),
+      icon: Icon(
+        _latestValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
+        color: Colors.white,
       ),
     );
   }
 
-  GestureDetector _buildExpandButton() {
-    return GestureDetector(
-      onTap: _onExpandCollapse,
-      child: AnimatedOpacity(
-        opacity: notifier.hideStuff ? 0.0 : 1.0,
-        duration: const Duration(milliseconds: 300),
-        child: Container(
-          height: barHeight + (chewieController.isFullScreen ? 15.0 : 0),
-          margin: const EdgeInsets.only(right: 12.0),
-          padding: const EdgeInsets.only(
-            left: 8.0,
-            right: 8.0,
-          ),
-          child: Center(
-            child: Icon(
-              chewieController.isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
-              color: Colors.white,
-            ),
-          ),
-        ),
+  IconButton _buildExpandButton() {
+    return IconButton(
+      onPressed: _onExpandCollapse,
+      icon: Icon(
+        chewieController.isFullScreen
+            ? Icons.fullscreen_exit
+            : Icons.fullscreen,
+        color: Colors.white,
       ),
     );
   }
@@ -405,7 +393,7 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
     }
   }
 
-  Widget _buildPosition(Color? iconColor) {
+  Widget _buildPosition() {
     final position = _latestValue.position;
     final duration = _latestValue.duration;
 
@@ -446,7 +434,9 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
           right: 12.0,
         ),
         child: Icon(
-          _subtitleOn ? Icons.closed_caption : Icons.closed_caption_off_outlined,
+          _subtitleOn
+              ? Icons.closed_caption
+              : Icons.closed_caption_off_outlined,
           color: _subtitleOn ? Colors.white : Colors.grey[700],
         ),
       ),
@@ -493,7 +483,8 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
       notifier.hideStuff = true;
 
       chewieController.toggleFullScreen();
-      _showAfterExpandCollapseTimer = Timer(const Duration(milliseconds: 300), () {
+      _showAfterExpandCollapseTimer =
+          Timer(const Duration(milliseconds: 300), () {
         setState(() {
           _cancelAndRestartTimer();
         });

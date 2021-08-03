@@ -43,7 +43,10 @@ class _ChewieDemoState extends State<ChewieDemo> {
         'https://9932704de5fc5c8.cmccloud.com.vn/videos/2021/07/5566590/540p/8779fe88676ad27e4246551df6ac14a1.mp4');
     _videoPlayerController2 = VideoPlayerController.network(
         'https://assets.mixkit.co/videos/preview/mixkit-a-girl-blowing-a-bubble-gum-at-an-amusement-park-1226-large.mp4');
-    await Future.wait([_videoPlayerController1.initialize(), _videoPlayerController2.initialize()]);
+    await Future.wait([
+      _videoPlayerController1.initialize(),
+      _videoPlayerController2.initialize()
+    ]);
     _createChewieController();
     setState(() {});
   }
@@ -84,7 +87,11 @@ class _ChewieDemoState extends State<ChewieDemo> {
           )
         ]),
       ),
-      Subtitle(index: 0, start: const Duration(seconds: 10), end: const Duration(seconds: 20), text: 'Whats up? :)'
+      Subtitle(
+          index: 0,
+          start: const Duration(seconds: 10),
+          end: const Duration(seconds: 20),
+          text: 'Whats up? :)'
           // text: const TextSpan(
           //   text: 'Whats up? :)',
           //   style: TextStyle(color: Colors.amber, fontSize: 22, fontStyle: FontStyle.italic),
@@ -96,7 +103,7 @@ class _ChewieDemoState extends State<ChewieDemo> {
       videoPlayerController: _videoPlayerController1,
       autoPlay: true,
       looping: true,
-
+      allowPlaybackSpeedChanging: false,
       subtitle: Subtitles(subtitles),
       subtitleBuilder: (context, dynamic subtitle) => Container(
         padding: const EdgeInsets.all(10.0),
@@ -138,7 +145,9 @@ class _ChewieDemoState extends State<ChewieDemo> {
           children: <Widget>[
             Expanded(
               child: Center(
-                child: _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
+                child: _chewieController != null &&
+                        _chewieController!
+                            .videoPlayerController.value.isInitialized
                     ? Theme(
                         data: ThemeData().copyWith(platform: _platform),
                         child: Chewie(
