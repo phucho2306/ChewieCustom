@@ -275,8 +275,8 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
                   ],
                 ),
               ),
-              SizedBox(
-                height: chewieController.isFullScreen ? 15.0 : 0,
+              const SizedBox(
+                height: 15.0,
               ),
               if (!chewieController.isLive)
                 Expanded(
@@ -313,16 +313,14 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
       child: AnimatedOpacity(
         opacity: notifier.hideStuff ? 0.0 : 1.0,
         duration: const Duration(milliseconds: 300),
-        child: ClipRect(
-          child: Container(
-            height: barHeight,
-            padding: const EdgeInsets.only(
-              right: 15.0,
-            ),
-            child: Icon(
-              _latestValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
-              color: Colors.white,
-            ),
+        child: Container(
+          height: barHeight,
+          padding: const EdgeInsets.only(
+            right: 15.0,
+          ),
+          child: Icon(
+            _latestValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
+            color: Colors.white,
           ),
         ),
       ),
