@@ -266,10 +266,10 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
             ),
             Container(
               height: barHeight / 3 + (chewieController.isFullScreen ? 10.0 : 0),
-              padding: EdgeInsets.only(
+              padding: const EdgeInsets.only(
                 left: 20,
                 right: 20,
-                bottom: !chewieController.isFullScreen ? 10.0 : 0,
+                bottom: 20,
               ),
               child: SafeArea(
                 bottom: chewieController.isFullScreen,
