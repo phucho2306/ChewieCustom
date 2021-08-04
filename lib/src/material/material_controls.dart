@@ -248,42 +248,43 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
     BuildContext context,
   ) {
     return AnimatedOpacity(
-        opacity: notifier.hideStuff ? 0.0 : 1.0,
-        duration: const Duration(milliseconds: 300),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  if (chewieController.isLive) const Expanded(child: Text('LIVE')) else _buildPosition(),
-                  const Spacer(),
-                  if (chewieController.allowMuting) _buildMuteButton(controller),
-                  if (chewieController.allowFullScreen) _buildExpandButton(),
-                ],
-              ),
+      opacity: notifier.hideStuff ? 0.0 : 1.0,
+      duration: const Duration(milliseconds: 300),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                if (chewieController.isLive) const Expanded(child: Text('LIVE')) else _buildPosition(),
+                const Spacer(),
+                if (chewieController.allowMuting) _buildMuteButton(controller),
+                if (chewieController.allowFullScreen) _buildExpandButton(),
+              ],
             ),
+          ),
+          if (!chewieController.isLive)
             Container(
-              height: barHeight / 3 + (chewieController.isFullScreen ? 10.0 : 0),
-              padding: const EdgeInsets.only(
+              height: barHeight / 2 + 10.0,
+              padding: EdgeInsets.only(
                 left: 20,
                 right: 20,
-                bottom: 20,
+                bottom: !chewieController.isFullScreen ? 20.0 : 0,
               ),
               child: SafeArea(
                 bottom: chewieController.isFullScreen,
                 child: Column(
-                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if (!chewieController.isLive) _buildProgressBar(),
+                    _buildProgressBar(),
                   ],
                 ),
               ),
             ),
-          ],
-        ));
+        ],
+      ),
+    );
   }
 
   IconButton _buildMuteButton(
