@@ -253,7 +253,7 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 20),
+            padding: const EdgeInsets.only(left: 20, right: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
@@ -266,11 +266,11 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
           ),
           if (!chewieController.isLive)
             Container(
-              height: barHeight / 2 + 10.0,
-              padding: EdgeInsets.only(
+              height: barHeight / 2 + 5,
+              padding: const EdgeInsets.only(
                 left: 20,
                 right: 20,
-                bottom: !chewieController.isFullScreen ? 20.0 : 0,
+                bottom: 20,
               ),
               child: SafeArea(
                 bottom: chewieController.isFullScreen,
@@ -287,11 +287,12 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
     );
   }
 
-  IconButton _buildMuteButton(
+  GestureDetector _buildMuteButton(
     VideoPlayerController controller,
   ) {
-    return IconButton(
-      onPressed: () {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
         _cancelAndRestartTimer();
 
         if (_latestValue.volume == 0) {
@@ -301,19 +302,26 @@ class _MaterialControlsState extends State<MaterialControls> with SingleTickerPr
           controller.setVolume(0.0);
         }
       },
-      icon: Icon(
-        _latestValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
-        color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Icon(
+          _latestValue.volume > 0 ? Icons.volume_up : Icons.volume_off,
+          color: Colors.white,
+        ),
       ),
     );
   }
 
-  IconButton _buildExpandButton() {
-    return IconButton(
-      onPressed: _onExpandCollapse,
-      icon: Icon(
-        chewieController.isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
-        color: Colors.white,
+  GestureDetector _buildExpandButton() {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: _onExpandCollapse,
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Icon(
+          chewieController.isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
+          color: Colors.white,
+        ),
       ),
     );
   }
